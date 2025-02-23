@@ -1,6 +1,6 @@
 streamlit
 crewai
-crewai-tools==0.0.9
+crewai-tools
 openai==1.12.0
 pydantic==2.6.1
 langchain==0.1.9

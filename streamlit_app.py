@@ -7,6 +7,7 @@ from crewai import Agent, Task, Crew, Process
 from crewai_tools import SerperDevTool
 import tracemalloc
 import warnings
+import os
 
 # Start tracemalloc
 tracemalloc.start()
@@ -25,7 +26,6 @@ warnings.filterwarnings('ignore', message=".*config.*")
 os.environ["PYTHONWARNINGS"] = "ignore::DeprecationWarning"
 
 # Load environment variables
-load_dotenv('.env', override=True)
 os.environ['OPENAI_API_KEY'] = st.secrets["OPENAI_API_KEY"]
 os.environ['SERPER_API_KEY'] = st.secrets('SERPER_API_KEY')
 
