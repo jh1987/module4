@@ -1,4 +1,8 @@
 import os
+import pysqlite3
+import sys
+sys.modules['sqlite3'] = pysqlite3
+
 import streamlit as st
 from crewai import Agent, Task, Crew, Process
 from crewai_tools import SerperDevTool
@@ -24,8 +28,8 @@ os.environ["PYTHONWARNINGS"] = "ignore::DeprecationWarning"
 
 # Load environment variables
 load_dotenv('.env', override=True)
-os.environ['OPENAI_API_KEY'] = os.getenv('OPENAI_API_KEY')
-os.environ['SERPER_API_KEY'] = os.getenv('SERPER_API_KEY')
+os.environ['OPENAI_API_KEY'] = st.secrets["OPENAI_API_KEY"]
+os.environ['SERPER_API_KEY'] = st.secrets('SERPER_API_KEY')
 
 # Initialize Serper API tool for web search
 search_tool = SerperDevTool()
