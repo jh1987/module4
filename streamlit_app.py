@@ -27,7 +27,7 @@ os.environ["PYTHONWARNINGS"] = "ignore::DeprecationWarning"
 
 # Load environment variables
 os.environ['OPENAI_API_KEY'] = st.secrets["OPENAI_API_KEY"]
-os.environ['SERPER_API_KEY'] = st.secrets('SERPER_API_KEY')
+os.environ['SERPER_API_KEY'] = st.secrets['SERPER_API_KEY']
 
 # Initialize Serper API tool for web search
 search_tool = SerperDevTool()
