@@ -4,7 +4,7 @@ sys.modules['sqlite3'] = pysqlite3
 
 import streamlit as st
 from crewai import Agent, Task, Crew, Process
-from crewai_tools import SerperDevTool
+from crewai_tools.tools.serper_dev_tool import SerperDevTool
 import tracemalloc
 import warnings
 import os
