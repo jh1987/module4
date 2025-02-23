@@ -105,6 +105,18 @@ st.write("Chat with AI agents to discover emerging AI trends and business opport
 # User input box
 user_query = st.text_input("Enter a topic (e.g., 'AI in supply chain'):")
 
+# Helper function to extract section content
+def extract_section(text, header):
+    try:
+        if "###" + header in text:
+            parts = text.split("###" + header)
+            if len(parts) > 1:
+                content = parts[1].split("###")[0].strip()
+                return content
+        return text.strip()
+    except Exception:
+        return text.strip()
+
 if st.button("Generate AI Insights"):
     if user_query:
         # Create placeholders for each section
@@ -114,21 +126,8 @@ if st.button("Generate AI Insights"):
         feasibility_placeholder = st.empty()
         pitch_placeholder = st.empty()
 
-        # --- Tasks and Execution ---
         with st.spinner("🔍 AI Agents are working..."):
-            # Function to extract content between headers
-            def extract_section(text, header):
-                try:
-                    if "###" + header in text:
-                        parts = text.split("###" + header)
-                        if len(parts) > 1:
-                            content = parts[1].split("###")[0].strip()
-                            return content
-                    return text.strip()
-                except Exception:
-                    return text.strip()
-
-            # Trends Research
+            # 1. Trend Research
             st.write("🔎 Trend Researcher is analyzing...")
             research_task = Task(
                 description=(
@@ -150,14 +149,16 @@ if st.button("Generate AI Insights"):
                 verbose=True
             )
             trends_result = trends_crew.kickoff()
+            trend_text = extract_section(str(trends_result), " AI Trends")
             with trends_placeholder.container():
                 st.markdown("### 🚀 **Key AI Trends Identified**")
-                st.write(extract_section(str(trends_result), " AI Trends"))
+                st.write(trend_text)
 
-            # Market Analysis
+            # 2. Market Analysis using trend context
             st.write("📊 Market Analyst is researching...")
             market_analysis_task = Task(
                 description=(
+                    f"Using the following AI trends:\n{trend_text}\n\n"
                     f"Analyze the market potential for AI solutions in {user_query}.\n"
                     "Your response MUST follow this format:\n"
                     "### Market Analysis\n"
@@ -176,14 +177,18 @@ if st.button("Generate AI Insights"):
                 verbose=True
             )
             market_result = market_crew.kickoff()
+            market_text = extract_section(str(market_result), " Market Analysis")
             with market_placeholder.container():
                 st.markdown("### 📊 **Market Analysis & Business Potential**")
-                st.write(extract_section(str(market_result), " Market Analysis"))
+                st.write(market_text)
 
-            # Business Model
+            # 3. Business Model using trends and market analysis
             st.write("💰 Business Model Architect is planning...")
             business_model_task = Task(
                 description=(
+                    f"Based on the following context:\n"
+                    f"AI Trends:\n{trend_text}\n\n"
+                    f"Market Analysis:\n{market_text}\n\n"
                     f"Create a business model for AI solutions in {user_query}.\n"
                     "Your response MUST follow this format:\n"
                     "### Business Model\n"
@@ -201,15 +206,20 @@ if st.button("Generate AI Insights"):
                 verbose=True
             )
             business_result = business_crew.kickoff()
+            business_text = extract_section(str(business_result), " Business Model")
             with business_placeholder.container():
                 st.markdown("### 💰 **Business Model & Monetization**")
-                st.write(extract_section(str(business_result), " Business Model"))
+                st.write(business_text)
 
-            # Technical Feasibility
+            # 4. Technical Feasibility using previous context
             st.write("🛠️ Technical Expert is evaluating...")
             feasibility_task = Task(
                 description=(
-                    f"Evaluate technical feasibility of AI implementation in {user_query}.\n"
+                    f"Taking into account the following details:\n"
+                    f"AI Trends:\n{trend_text}\n\n"
+                    f"Market Analysis:\n{market_text}\n\n"
+                    f"Business Model:\n{business_text}\n\n"
+                    f"Evaluate the technical feasibility of implementing AI in {user_query}.\n"
                     "Your response MUST follow this format:\n"
                     "### Technical Feasibility\n"
                     "Required Infrastructure: [List]\n"
@@ -226,15 +236,21 @@ if st.button("Generate AI Insights"):
                 verbose=True
             )
             feasibility_result = feasibility_crew.kickoff()
+            feasibility_text = extract_section(str(feasibility_result), " Technical Feasibility")
             with feasibility_placeholder.container():
                 st.markdown("### 🛠️ **Technical Feasibility & Challenges**")
-                st.write(extract_section(str(feasibility_result), " Technical Feasibility"))
+                st.write(feasibility_text)
 
-            # Pitch Summary
+            # 5. Pitch Summary using all previous outputs
             st.write("🎤 Storyteller is crafting the pitch...")
             storytelling_task = Task(
                 description=(
-                    f"Create a compelling pitch for the AI solution in {user_query}.\n"
+                    f"Based on the complete analysis from the previous sections:\n"
+                    f"AI Trends:\n{trend_text}\n\n"
+                    f"Market Analysis:\n{market_text}\n\n"
+                    f"Business Model:\n{business_text}\n\n"
+                    f"Technical Feasibility:\n{feasibility_text}\n\n"
+                    f"Create a compelling pitch for an AI solution in {user_query}.\n"
                     "Your response MUST follow this format:\n"
                     "### Pitch Summary\n"
                     "Value Proposition: [Clear statement]\n"
@@ -251,11 +267,11 @@ if st.button("Generate AI Insights"):
                 verbose=True
             )
             pitch_result = pitch_crew.kickoff()
+            pitch_text = extract_section(str(pitch_result), " Pitch Summary")
             with pitch_placeholder.container():
                 st.markdown("### 🎤 **Final Pitch Summary**")
-                st.write(extract_section(str(pitch_result), " Pitch Summary"))
+                st.write(pitch_text)
 
         st.success("✅ Analysis completed!")
-
     else:
         st.warning("⚠️ Please enter a topic to research.")
